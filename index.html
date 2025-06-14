@@ -296,15 +296,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Initialize Supabase with implicit flow for email confirmations
+        // Initialize Supabase - let it auto-detect the flow type
         const { createClient } = supabase;
         const supabaseClient = createClient(
             'https://bpnwodgubpmhhkpoygip.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3ODgzMjIsImV4cCI6MjA1MTM2NDMyMn0.YmksNHOABMGG-Jt7jN6TUTpzJAYmtFANjUi0n_WCOjw',
             {
                 auth: {
-                    detectSessionInUrl: true,
-                    flowType: 'implicit'
+                    detectSessionInUrl: true
                 }
             }
         );
@@ -373,52 +372,24 @@
                 passwordInput.addEventListener('input', updatePasswordStrength);
             }
             
-            // Wait for Supabase to automatically detect and set the session
-            console.log('Waiting for Supabase to process the URL session...');
+            // Simple approach: just wait for Supabase to handle the URL automatically
             console.log('Current URL:', window.location.href);
-            console.log('URL params:', new URLSearchParams(window.location.search));
-            console.log('Fragment params:', new URLSearchParams(window.location.hash.slice(1)));
-            console.log('Access token found:', !!accessToken);
-            console.log('Code found:', !!code);
+            console.log('Code parameter:', code);
             
-            // Listen for auth state changes
+            // Listen for auth state changes - this will fire when Supabase processes the URL
             supabaseClient.auth.onAuthStateChange((event, session) => {
-                console.log('Auth state changed:', event, session);
+                console.log('Auth event:', event, session ? session.user.email : 'no session');
                 if (session) {
                     currentSession = session;
-                    console.log('Session established from URL:', session.user.email);
-                } else if (event === 'SIGNED_OUT') {
-                    currentSession = null;
                 }
             });
             
-            // For implicit flow, tokens should be automatically detected
-            // For PKCE fallback, try manual code exchange
-            if (code && !accessToken && !currentSession) {
-                console.log('Attempting manual code exchange (PKCE fallback)...');
-                try {
-                    const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
-                    if (data.session) {
-                        console.log('Manual code exchange successful:', data.user.email);
-                        currentSession = data.session;
-                    } else {
-                        console.error('Manual code exchange failed:', error);
-                    }
-                } catch (err) {
-                    console.error('Manual code exchange error:', err);
-                }
-            }
-            
-            // Wait a bit for the session to be processed
+            // Give Supabase time to process the URL and establish session
             setTimeout(async () => {
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                if (session) {
-                    currentSession = session;
-                    console.log('Session found:', session.user.email);
-                } else {
-                    console.log('No session found after timeout');
-                }
-            }, 2000);
+                console.log('Final session check:', session ? session.user.email : 'No session');
+                currentSession = session;
+            }, 3000);
             
             // Add form event listener
             const form = document.querySelector('form');
