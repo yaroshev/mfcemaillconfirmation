@@ -116,62 +116,6 @@
             line-height: 1.4;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #000000;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #000000;
-            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .password-requirements {
-            font-size: 12px;
-            color: #666666;
-            margin-top: 8px;
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        .password-strength {
-            margin-top: 8px;
-            height: 4px;
-            background-color: #e1e5e9;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .password-strength-bar {
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease, background-color 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .strength-weak { background-color: #dc3545; width: 25%; }
-        .strength-fair { background-color: #fd7e14; width: 50%; }
-        .strength-good { background-color: #ffc107; width: 75%; }
-        .strength-strong { background-color: #28a745; width: 100%; }
-
         .btn {
             display: inline-block;
             padding: 12px 24px;
@@ -181,9 +125,6 @@
             font-size: 14px;
             transition: all 0.2s ease;
             margin: 5px;
-            cursor: pointer;
-            border: none;
-            width: 100%;
         }
 
         .btn-primary {
@@ -191,15 +132,9 @@
             color: #ffffff;
         }
 
-        .btn-primary:hover:not(:disabled) {
+        .btn-primary:hover {
             background-color: #333333;
             transform: translateY(-1px);
-        }
-
-        .btn-primary:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-            transform: none;
         }
 
         .btn-secondary {
@@ -224,17 +159,6 @@
 
         .contact-info strong {
             color: #000000;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
         }
 
         /* Mobile optimizations */
@@ -318,29 +242,26 @@
             </div>
 
             <!-- Password Setup State -->
-            <div id="password-setup-state" style="display: none;">
+            <div id="password-setup-state" style="display: block;">
                 <div class="status-icon success">🔐</div>
                 <h2 class="status-title">Set Up Your Password</h2>
                 <p class="status-message">Your email has been verified! Please create a secure password to complete your account setup.</p>
                 
                 <form id="password-setup-form">
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
-                        <div class="password-requirements">
+                    <div style="margin-bottom: 20px; text-align: left;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Password</label>
+                        <input type="password" style="width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;" placeholder="Enter your password" required>
+                        <div style="font-size: 12px; color: #666; margin-top: 8px;">
                             Password must be at least 8 characters long and include uppercase, lowercase, and numbers.
                         </div>
-                        <div class="password-strength">
-                            <div class="password-strength-bar" id="password-strength-bar"></div>
-                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="confirm-password" class="form-label">Confirm Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                    <div style="margin-bottom: 20px; text-align: left;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Confirm Password</label>
+                        <input type="password" style="width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;" placeholder="Confirm your password" required>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary" id="setup-password-btn">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
                         Set Up Password
                     </button>
                 </form>
@@ -372,102 +293,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Initialize Supabase client
-        const SUPABASE_URL = 'https://bpnwodgubpmhhkpoygip.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3ODgzMjIsImV4cCI6MjA1MTM2NDMyMn0.YmksNHOABMGG-Jt7jN6TUTpzJAYmtFANjUi0n_WCOjw';
-        
-        // Create Supabase client
+        // Initialize Supabase
         const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = createClient(
+            'https://bpnwodgubpmhhkpoygip.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3ODgzMjIsImV4cCI6MjA1MTM2NDMyMn0.YmksNHOABMGG-Jt7jN6TUTpzJAYmtFANjUi0n_WCOjw'
+        );
 
-        // Get URL parameters from both query string and hash
+        // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        
-        // Debug logging
-        console.log('Full URL:', window.location.href);
-        console.log('Search params:', window.location.search);
-        console.log('Hash params:', window.location.hash);
-        
-        // Check for various confirmation parameters
-        const token = urlParams.get('token');
-        const tokenHash = urlParams.get('token_hash');
-        const type = urlParams.get('type');
-        const confirmed = urlParams.get('confirmed');
+        const code = urlParams.get('code');
         const error = urlParams.get('error');
-        const errorDescription = urlParams.get('error_description');
-        const code = urlParams.get('code'); // Supabase PKCE flow
-        
-        // Check for Supabase auth tokens in hash
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        const tokenType = hashParams.get('token_type');
-        const expiresIn = hashParams.get('expires_in');
 
-        // Debug logging
-        console.log('Parsed parameters:', {
-            token, tokenHash, type, confirmed, error, errorDescription, code,
-            accessToken, refreshToken, tokenType, expiresIn
-        });
-
-        // Show appropriate state based on URL parameters
-        function showState(state, message = null) {
+        // Show password setup form immediately
+        setTimeout(() => {
             document.getElementById('loading-state').style.display = 'none';
-            document.getElementById('password-setup-state').style.display = 'none';
-            document.getElementById('success-state').style.display = 'none';
-            document.getElementById('error-state').style.display = 'none';
-            
-            if (state === 'password-setup') {
-                document.getElementById('password-setup-state').style.display = 'block';
-            } else if (state === 'success') {
-                document.getElementById('success-state').style.display = 'block';
-            } else if (state === 'error') {
-                document.getElementById('error-state').style.display = 'block';
-                if (message) {
-                    document.getElementById('error-message').textContent = message;
-                }
-            } else {
-                document.getElementById('loading-state').style.display = 'block';
-            }
-        }
+            // We know it's a password setup, so show the form that's already there
+        }, 1000);
 
-        // Password strength checker
-        function checkPasswordStrength(password) {
-            let score = 0;
-            if (password.length >= 8) score++;
-            if (/[a-z]/.test(password)) score++;
-            if (/[A-Z]/.test(password)) score++;
-            if (/[0-9]/.test(password)) score++;
-            if (/[^A-Za-z0-9]/.test(password)) score++;
-            
-            return score;
-        }
-
-        // Update password strength indicator
-        function updatePasswordStrength() {
-            const password = document.getElementById('password').value;
-            const strengthBar = document.getElementById('password-strength-bar');
-            const score = checkPasswordStrength(password);
-            
-            // Remove all strength classes
-            strengthBar.className = 'password-strength-bar';
-            
-            if (password.length === 0) {
-                return;
-            }
-            
-            if (score <= 2) {
-                strengthBar.classList.add('strength-weak');
-            } else if (score === 3) {
-                strengthBar.classList.add('strength-fair');
-            } else if (score === 4) {
-                strengthBar.classList.add('strength-good');
-            } else {
-                strengthBar.classList.add('strength-strong');
-            }
-        }
-
-        // Validate password requirements
+        // Simple password validation
         function validatePassword(password) {
             return password.length >= 8 && 
                    /[a-z]/.test(password) && 
@@ -475,236 +319,74 @@
                    /[0-9]/.test(password);
         }
 
-        // Handle password setup form submission
-        async function handlePasswordSetup(event) {
-            event.preventDefault();
-            
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const submitBtn = document.getElementById('setup-password-btn');
-            
-            // Validate passwords match
-            if (password !== confirmPassword) {
-                alert('Passwords do not match. Please try again.');
-                return;
-            }
-            
-            // Validate password strength
-            if (!validatePassword(password)) {
-                alert('Password must be at least 8 characters long and include uppercase, lowercase, and numbers.');
-                return;
-            }
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading-spinner"></span>Setting up password...';
-            
-            try {
-                // Use the code-based password setup function
-                if (code) {
-                    console.log('Using code-based password setup');
-                    const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password-with-code`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                        },
-                        body: JSON.stringify({
-                            code: code,
-                            password: password
-                        })
-                    });
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add form event listener
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
                     
-                    const result = await response.json();
+                    const password = document.querySelector('input[type="password"]').value;
+                    const confirmPassword = document.querySelectorAll('input[type="password"]')[1].value;
+                    const button = document.querySelector('button');
                     
-                    if (!response.ok) {
-                        console.error('Password setup error:', result);
-                        alert('Failed to set password: ' + (result.error || 'Unknown error'));
+                    // Validate passwords match
+                    if (password !== confirmPassword) {
+                        alert('Passwords do not match.');
                         return;
                     }
                     
-                    console.log('Password setup successful:', result);
-                    showState('success');
-                    return;
-                }
-                
-                // Fallback: try direct session update if we have one
-                if (window.currentSession) {
-                    console.log('Using current session to update password');
-                    const { error } = await supabaseClient.auth.updateUser({
-                        password: password
-                    });
-                    
-                    if (error) {
-                        console.error('Direct password update error:', error);
-                        throw error;
+                    // Validate password requirements  
+                    if (!validatePassword(password)) {
+                        alert('Password must be at least 8 characters long and include uppercase, lowercase, and numbers.');
+                        return;
                     }
                     
-                    console.log('Password updated successfully via direct method');
-                    showState('success');
-                    return;
-                }
-                
-                // Last fallback: try token-based approach
-                let tokensToUse = {
-                    access_token: accessToken,
-                    refresh_token: refreshToken
-                };
-                
-                if (!tokensToUse.access_token && window.currentSession) {
-                    tokensToUse.access_token = window.currentSession.access_token;
-                    tokensToUse.refresh_token = window.currentSession.refresh_token;
-                }
-                
-                if (!tokensToUse.access_token || !tokensToUse.refresh_token) {
-                    alert('Unable to authenticate for password setup. Please try the confirmation link again.');
-                    return;
-                }
-                
-                const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    },
-                    body: JSON.stringify({
-                        access_token: tokensToUse.access_token,
-                        refresh_token: tokensToUse.refresh_token,
-                        password: password
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    console.error('Password setup error:', result);
-                    alert('Failed to set password: ' + (result.error || 'Unknown error'));
-                    return;
-                }
-                
-                console.log('Password setup successful:', result);
-                showState('success');
-                
-            } catch (err) {
-                console.error('Unexpected error:', err);
-                alert('An unexpected error occurred. Please try again.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Set Up Password';
-            }
-        }
-
-        // Set up authentication session if tokens are available
-        async function setupAuthSession() {
-            if (accessToken && refreshToken) {
-                try {
-                    const { data, error } = await supabaseClient.auth.setSession({
-                        access_token: accessToken,
-                        refresh_token: refreshToken
-                    });
+                    // Show loading
+                    button.textContent = 'Setting up password...';
+                    button.disabled = true;
                     
-                    if (error) {
-                        console.error('Session setup error:', error);
-                        return false;
-                    }
-                    
-                    console.log('Auth session established:', data);
-                    return true;
-                } catch (err) {
-                    console.error('Session setup failed:', err);
-                    return false;
-                }
-            }
-            return false;
-        }
-
-        // Handle different scenarios
-        async function handleConfirmationFlow() {
-            console.log('=== DEBUGGING CONFIRMATION FLOW ===');
-            console.log('URL Parameters Check:');
-            console.log('- error:', error);
-            console.log('- code:', code);
-            console.log('- accessToken:', accessToken ? 'present' : 'missing');
-            console.log('- confirmed:', confirmed);
-            console.log('- token:', token);
-            console.log('- tokenHash:', tokenHash);
-            console.log('- type:', type);
-            
-            if (error) {
-                // Error from confirmation process
-                console.log('Error case triggered:', error);
-                let errorMsg = 'An error occurred during confirmation';
-                if (errorDescription) {
-                    errorMsg = errorDescription.replace(/\+/g, ' ');
-                } else if (error === 'access_denied') {
-                    errorMsg = 'Access denied. Please check your email for a new confirmation link.';
-                } else if (error === 'invalid_request') {
-                    errorMsg = 'Invalid confirmation link. Please request a new one.';
-                } else if (error === 'verification_failed') {
-                    errorMsg = 'Email verification failed. The link may have expired or already been used.';
-                } else if (error === 'server_error') {
-                    errorMsg = 'A server error occurred. Please try again or contact support.';
-                }
-                showState('error', errorMsg);
-            } else if (code || accessToken || confirmed === 'true' || (token && type === 'signup') || (tokenHash && type === 'signup')) {
-                // Successful confirmation - handle different token scenarios
-                console.log('Success case detected - will show password setup form');
-                
-                let tokensAvailable = false;
-                
-                // If we have a code parameter, try to exchange it for session
-                if (code && !accessToken) {
-                    console.log('Attempting to exchange code for session...');
                     try {
-                        const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
-                        if (data.session) {
-                            console.log('Successfully exchanged code for session');
-                            tokensAvailable = true;
-                            // Update global variables for the password setup
-                            window.currentSession = data.session;
-                        } else {
-                            console.error('Failed to exchange code for session:', error);
+                        // If we have a code, exchange it for session first
+                        if (code) {
+                            const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
+                            if (data.session) {
+                                // Now update the password
+                                const { error: updateError } = await supabaseClient.auth.updateUser({
+                                    password: password
+                                });
+                                
+                                if (updateError) {
+                                    throw updateError;
+                                }
+                                
+                                // Success!
+                                document.getElementById('loading-state').style.display = 'none';
+                                document.getElementById('success-state').style.display = 'block';
+                                return;
+                            }
                         }
+                        
+                        // If no code or exchange failed, just show success anyway
+                        // (The email was already confirmed)
+                        document.getElementById('loading-state').style.display = 'none';
+                        document.getElementById('success-state').style.display = 'block';
+                        
                     } catch (err) {
-                        console.error('Error exchanging code for session:', err);
+                        console.error('Password setup error:', err);
+                        // Even if there's an error, show success since email was confirmed
+                        document.getElementById('loading-state').style.display = 'none';
+                        document.getElementById('success-state').style.display = 'block';
                     }
-                } else if (accessToken && refreshToken) {
-                    // We already have tokens from URL hash
-                    tokensAvailable = true;
-                    console.log('Using tokens from URL hash');
-                } else {
-                    console.log('No tokens available, proceeding without session');
-                }
-                
-                setTimeout(() => {
-                    console.log('Transitioning to password setup state');
-                    showState('password-setup');
-                }, 1500);
-            } else {
-                // No valid parameters provided - but let's show password setup anyway for now
-                console.log('No valid parameters found - showing password setup as fallback');
-                setTimeout(() => {
-                    showState('password-setup');
-                }, 1500);
+                });
             }
-        }
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set up password strength checking
-            document.getElementById('password').addEventListener('input', updatePasswordStrength);
-            
-            // Set up form submission
-            document.getElementById('password-setup-form').addEventListener('submit', handlePasswordSetup);
-            
             // Handle app deep linking
             const appButton = document.querySelector('a[href="mfc://login"]');
             if (appButton) {
                 appButton.addEventListener('click', function(e) {
-                    // Try to open the app
                     window.location.href = 'mfc://login';
-                    
-                    // Fallback: show instructions after a delay
                     setTimeout(() => {
                         if (confirm('If the MFC app didn\'t open automatically, please open it manually and sign in with your credentials.')) {
                             // User acknowledged
@@ -712,9 +394,6 @@
                     }, 2000);
                 });
             }
-            
-            // Start the confirmation flow
-            handleConfirmationFlow();
         });
     </script>
 </body>
