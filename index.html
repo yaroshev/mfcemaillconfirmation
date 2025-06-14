@@ -270,6 +270,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         
+        // Debug logging
+        console.log('Full URL:', window.location.href);
+        console.log('Search params:', window.location.search);
+        console.log('Hash params:', window.location.hash);
+        
         // Check for various confirmation parameters
         const token = urlParams.get('token');
         const tokenHash = urlParams.get('token_hash');
@@ -283,6 +288,12 @@
         const refreshToken = hashParams.get('refresh_token');
         const tokenType = hashParams.get('token_type');
         const expiresIn = hashParams.get('expires_in');
+
+        // Debug logging
+        console.log('Parsed parameters:', {
+            token, tokenHash, type, confirmed, error, errorDescription,
+            accessToken, refreshToken, tokenType, expiresIn
+        });
 
         // Show appropriate state based on URL parameters
         function showState(state, message = null) {
@@ -305,6 +316,7 @@
         // Handle different scenarios
         if (error) {
             // Error from confirmation process
+            console.log('Error case triggered:', error);
             let errorMsg = 'An error occurred during confirmation';
             if (errorDescription) {
                 errorMsg = errorDescription.replace(/\+/g, ' ');
@@ -320,27 +332,31 @@
             showState('error', errorMsg);
         } else if (accessToken && refreshToken) {
             // Successful confirmation via Supabase built-in flow
-            console.log('Email confirmed successfully via Supabase auth');
+            console.log('Success case: accessToken and refreshToken found');
             setTimeout(() => {
                 showState('success');
             }, 1500);
         } else if (confirmed === 'true') {
             // Successful confirmation via edge function
+            console.log('Success case: confirmed=true');
             setTimeout(() => {
                 showState('success');
             }, 1500);
         } else if (token && type === 'signup') {
             // Legacy token format - show success
+            console.log('Success case: token and type=signup');
             setTimeout(() => {
                 showState('success');
             }, 1500);
         } else if (tokenHash && type === 'signup') {
             // Token hash provided - show success (Supabase handles verification)
+            console.log('Success case: tokenHash and type=signup');
             setTimeout(() => {
                 showState('success');
             }, 1500);
         } else {
             // No valid parameters provided
+            console.log('Fallback case: No valid parameters found');
             showState('error', 'Missing confirmation token. Please check your email for the correct link.');
         }
 
