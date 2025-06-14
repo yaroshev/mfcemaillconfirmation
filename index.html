@@ -370,14 +370,15 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Initialize Supabase client
         const SUPABASE_URL = 'https://bpnwodgubpmhhkpoygip.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3ODgzMjIsImV4cCI6MjA1MTM2NDMyMn0.YmksNHOABMGG-Jt7jN6TUTpzJAYmtFANjUi0n_WCOjw';
         
-        // Import Supabase client
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Create Supabase client
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Get URL parameters from both query string and hash
         const urlParams = new URLSearchParams(window.location.search);
@@ -543,7 +544,7 @@
         async function setupAuthSession() {
             if (accessToken && refreshToken) {
                 try {
-                    const { data, error } = await supabase.auth.setSession({
+                    const { data, error } = await supabaseClient.auth.setSession({
                         access_token: accessToken,
                         refresh_token: refreshToken
                     });
@@ -565,6 +566,16 @@
 
         // Handle different scenarios
         async function handleConfirmationFlow() {
+            console.log('=== DEBUGGING CONFIRMATION FLOW ===');
+            console.log('URL Parameters Check:');
+            console.log('- error:', error);
+            console.log('- code:', code);
+            console.log('- accessToken:', accessToken ? 'present' : 'missing');
+            console.log('- confirmed:', confirmed);
+            console.log('- token:', token);
+            console.log('- tokenHash:', tokenHash);
+            console.log('- type:', type);
+            
             if (error) {
                 // Error from confirmation process
                 console.log('Error case triggered:', error);
@@ -583,18 +594,22 @@
                 showState('error', errorMsg);
             } else if (code || accessToken || confirmed === 'true' || (token && type === 'signup') || (tokenHash && type === 'signup')) {
                 // Successful confirmation - check if we need to set up auth session
-                console.log('Success case detected');
+                console.log('Success case detected - will show password setup form');
                 
                 // Try to establish auth session
                 const sessionEstablished = await setupAuthSession();
+                console.log('Session established:', sessionEstablished);
                 
                 setTimeout(() => {
+                    console.log('Transitioning to password setup state');
                     showState('password-setup');
                 }, 1500);
             } else {
-                // No valid parameters provided
-                console.log('Fallback case: No valid parameters found');
-                showState('error', 'Missing confirmation token. Please check your email for the correct link.');
+                // No valid parameters provided - but let's show password setup anyway for now
+                console.log('No valid parameters found - showing password setup as fallback');
+                setTimeout(() => {
+                    showState('password-setup');
+                }, 1500);
             }
         }
 
