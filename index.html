@@ -282,6 +282,7 @@
         const confirmed = urlParams.get('confirmed');
         const error = urlParams.get('error');
         const errorDescription = urlParams.get('error_description');
+        const code = urlParams.get('code'); // Supabase PKCE flow
         
         // Check for Supabase auth tokens in hash
         const accessToken = hashParams.get('access_token');
@@ -291,7 +292,7 @@
 
         // Debug logging
         console.log('Parsed parameters:', {
-            token, tokenHash, type, confirmed, error, errorDescription,
+            token, tokenHash, type, confirmed, error, errorDescription, code,
             accessToken, refreshToken, tokenType, expiresIn
         });
 
@@ -330,6 +331,12 @@
                 errorMsg = 'A server error occurred. Please try again or contact support.';
             }
             showState('error', errorMsg);
+        } else if (code) {
+            // Supabase PKCE flow - code parameter indicates successful email confirmation
+            console.log('Success case: code parameter found (PKCE flow)');
+            setTimeout(() => {
+                showState('success');
+            }, 1500);
         } else if (accessToken && refreshToken) {
             // Successful confirmation via Supabase built-in flow
             console.log('Success case: accessToken and refreshToken found');
