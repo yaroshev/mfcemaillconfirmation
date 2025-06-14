@@ -116,6 +116,62 @@
             line-height: 1.4;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #000000;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #000000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #666666;
+            margin-top: 8px;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background-color: #e1e5e9;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background-color: #dc3545; width: 25%; }
+        .strength-fair { background-color: #fd7e14; width: 50%; }
+        .strength-good { background-color: #ffc107; width: 75%; }
+        .strength-strong { background-color: #28a745; width: 100%; }
+
         .btn {
             display: inline-block;
             padding: 12px 24px;
@@ -125,6 +181,9 @@
             font-size: 14px;
             transition: all 0.2s ease;
             margin: 5px;
+            cursor: pointer;
+            border: none;
+            width: 100%;
         }
 
         .btn-primary {
@@ -132,9 +191,15 @@
             color: #ffffff;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: #333333;
             transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-secondary {
@@ -159,6 +224,17 @@
 
         .contact-info strong {
             color: #000000;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
         }
 
         /* Mobile optimizations */
@@ -241,11 +317,40 @@
                 <p class="status-message">Please wait while we verify your email address...</p>
             </div>
 
+            <!-- Password Setup State -->
+            <div id="password-setup-state" style="display: none;">
+                <div class="status-icon success">🔐</div>
+                <h2 class="status-title">Set Up Your Password</h2>
+                <p class="status-message">Your email has been verified! Please create a secure password to complete your account setup.</p>
+                
+                <form id="password-setup-form">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+                        <div class="password-requirements">
+                            Password must be at least 8 characters long and include uppercase, lowercase, and numbers.
+                        </div>
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="password-strength-bar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password" class="form-label">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="setup-password-btn">
+                        Set Up Password
+                    </button>
+                </form>
+            </div>
+
             <!-- Success State -->
             <div id="success-state" style="display: none;">
                 <div class="status-icon success">✓</div>
-                <h2 class="status-title">Email Confirmed!</h2>
-                <p class="status-message">Your email has been verified. You can now access your MFC account.</p>
+                <h2 class="status-title">Account Ready!</h2>
+                <p class="status-message">Your password has been set up successfully. You can now access your MFC account.</p>
                 <a href="mfc://login" class="btn btn-primary">Open MFC App</a>
             </div>
 
@@ -266,6 +371,14 @@
     </div>
 
     <script>
+        // Initialize Supabase client
+        const SUPABASE_URL = 'https://bpnwodgubpmhhkpoygip.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3ODgzMjIsImV4cCI6MjA1MTM2NDMyMn0.YmksNHOABMGG-Jt7jN6TUTpzJAYmtFANjUi0n_WCOjw';
+        
+        // Import Supabase client
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Get URL parameters from both query string and hash
         const urlParams = new URLSearchParams(window.location.search);
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -299,10 +412,13 @@
         // Show appropriate state based on URL parameters
         function showState(state, message = null) {
             document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('password-setup-state').style.display = 'none';
             document.getElementById('success-state').style.display = 'none';
             document.getElementById('error-state').style.display = 'none';
             
-            if (state === 'success') {
+            if (state === 'password-setup') {
+                document.getElementById('password-setup-state').style.display = 'block';
+            } else if (state === 'success') {
                 document.getElementById('success-state').style.display = 'block';
             } else if (state === 'error') {
                 document.getElementById('error-state').style.display = 'block';
@@ -314,61 +430,183 @@
             }
         }
 
-        // Handle different scenarios
-        if (error) {
-            // Error from confirmation process
-            console.log('Error case triggered:', error);
-            let errorMsg = 'An error occurred during confirmation';
-            if (errorDescription) {
-                errorMsg = errorDescription.replace(/\+/g, ' ');
-            } else if (error === 'access_denied') {
-                errorMsg = 'Access denied. Please check your email for a new confirmation link.';
-            } else if (error === 'invalid_request') {
-                errorMsg = 'Invalid confirmation link. Please request a new one.';
-            } else if (error === 'verification_failed') {
-                errorMsg = 'Email verification failed. The link may have expired or already been used.';
-            } else if (error === 'server_error') {
-                errorMsg = 'A server error occurred. Please try again or contact support.';
-            }
-            showState('error', errorMsg);
-        } else if (code) {
-            // Supabase PKCE flow - code parameter indicates successful email confirmation
-            console.log('Success case: code parameter found (PKCE flow)');
-            setTimeout(() => {
-                showState('success');
-            }, 1500);
-        } else if (accessToken && refreshToken) {
-            // Successful confirmation via Supabase built-in flow
-            console.log('Success case: accessToken and refreshToken found');
-            setTimeout(() => {
-                showState('success');
-            }, 1500);
-        } else if (confirmed === 'true') {
-            // Successful confirmation via edge function
-            console.log('Success case: confirmed=true');
-            setTimeout(() => {
-                showState('success');
-            }, 1500);
-        } else if (token && type === 'signup') {
-            // Legacy token format - show success
-            console.log('Success case: token and type=signup');
-            setTimeout(() => {
-                showState('success');
-            }, 1500);
-        } else if (tokenHash && type === 'signup') {
-            // Token hash provided - show success (Supabase handles verification)
-            console.log('Success case: tokenHash and type=signup');
-            setTimeout(() => {
-                showState('success');
-            }, 1500);
-        } else {
-            // No valid parameters provided
-            console.log('Fallback case: No valid parameters found');
-            showState('error', 'Missing confirmation token. Please check your email for the correct link.');
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+            
+            return score;
         }
 
-        // Handle app deep linking
+        // Update password strength indicator
+        function updatePasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('password-strength-bar');
+            const score = checkPasswordStrength(password);
+            
+            // Remove all strength classes
+            strengthBar.className = 'password-strength-bar';
+            
+            if (password.length === 0) {
+                return;
+            }
+            
+            if (score <= 2) {
+                strengthBar.classList.add('strength-weak');
+            } else if (score === 3) {
+                strengthBar.classList.add('strength-fair');
+            } else if (score === 4) {
+                strengthBar.classList.add('strength-good');
+            } else {
+                strengthBar.classList.add('strength-strong');
+            }
+        }
+
+        // Validate password requirements
+        function validatePassword(password) {
+            return password.length >= 8 && 
+                   /[a-z]/.test(password) && 
+                   /[A-Z]/.test(password) && 
+                   /[0-9]/.test(password);
+        }
+
+        // Handle password setup form submission
+        async function handlePasswordSetup(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const submitBtn = document.getElementById('setup-password-btn');
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match. Please try again.');
+                return;
+            }
+            
+            // Validate password strength
+            if (!validatePassword(password)) {
+                alert('Password must be at least 8 characters long and include uppercase, lowercase, and numbers.');
+                return;
+            }
+            
+            // Check if we have the required tokens
+            if (!accessToken || !refreshToken) {
+                alert('Missing authentication tokens. Please try the confirmation link again.');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>Setting up password...';
+            
+            try {
+                // Call our custom edge function to set up the password
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                        password: password
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    console.error('Password setup error:', result);
+                    alert('Failed to set password: ' + (result.error || 'Unknown error'));
+                    return;
+                }
+                
+                console.log('Password setup successful:', result);
+                showState('success');
+                
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                alert('An unexpected error occurred. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Set Up Password';
+            }
+        }
+
+        // Set up authentication session if tokens are available
+        async function setupAuthSession() {
+            if (accessToken && refreshToken) {
+                try {
+                    const { data, error } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken
+                    });
+                    
+                    if (error) {
+                        console.error('Session setup error:', error);
+                        return false;
+                    }
+                    
+                    console.log('Auth session established:', data);
+                    return true;
+                } catch (err) {
+                    console.error('Session setup failed:', err);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // Handle different scenarios
+        async function handleConfirmationFlow() {
+            if (error) {
+                // Error from confirmation process
+                console.log('Error case triggered:', error);
+                let errorMsg = 'An error occurred during confirmation';
+                if (errorDescription) {
+                    errorMsg = errorDescription.replace(/\+/g, ' ');
+                } else if (error === 'access_denied') {
+                    errorMsg = 'Access denied. Please check your email for a new confirmation link.';
+                } else if (error === 'invalid_request') {
+                    errorMsg = 'Invalid confirmation link. Please request a new one.';
+                } else if (error === 'verification_failed') {
+                    errorMsg = 'Email verification failed. The link may have expired or already been used.';
+                } else if (error === 'server_error') {
+                    errorMsg = 'A server error occurred. Please try again or contact support.';
+                }
+                showState('error', errorMsg);
+            } else if (code || accessToken || confirmed === 'true' || (token && type === 'signup') || (tokenHash && type === 'signup')) {
+                // Successful confirmation - check if we need to set up auth session
+                console.log('Success case detected');
+                
+                // Try to establish auth session
+                const sessionEstablished = await setupAuthSession();
+                
+                setTimeout(() => {
+                    showState('password-setup');
+                }, 1500);
+            } else {
+                // No valid parameters provided
+                console.log('Fallback case: No valid parameters found');
+                showState('error', 'Missing confirmation token. Please check your email for the correct link.');
+            }
+        }
+
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
+            // Set up password strength checking
+            document.getElementById('password').addEventListener('input', updatePasswordStrength);
+            
+            // Set up form submission
+            document.getElementById('password-setup-form').addEventListener('submit', handlePasswordSetup);
+            
+            // Handle app deep linking
             const appButton = document.querySelector('a[href="mfc://login"]');
             if (appButton) {
                 appButton.addEventListener('click', function(e) {
@@ -383,6 +621,9 @@
                     }, 2000);
                 });
             }
+            
+            // Start the confirmation flow
+            handleConfirmationFlow();
         });
     </script>
 </body>
