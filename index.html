@@ -372,11 +372,26 @@
                 passwordInput.addEventListener('input', updatePasswordStrength);
             }
             
-            // Simple approach: just wait for Supabase to handle the URL automatically
+            // Force manual code exchange since detectSessionInUrl isn't working
             console.log('Current URL:', window.location.href);
             console.log('Code parameter:', code);
             
-            // Listen for auth state changes - this will fire when Supabase processes the URL
+            if (code) {
+                console.log('Manually exchanging PKCE code for session...');
+                try {
+                    const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
+                    if (data.session) {
+                        console.log('Manual code exchange successful:', data.session.user.email);
+                        currentSession = data.session;
+                    } else {
+                        console.error('Manual code exchange failed:', error);
+                    }
+                } catch (err) {
+                    console.error('Code exchange error:', err);
+                }
+            }
+            
+            // Listen for auth state changes
             supabaseClient.auth.onAuthStateChange((event, session) => {
                 console.log('Auth event:', event, session ? session.user.email : 'no session');
                 if (session) {
@@ -384,12 +399,12 @@
                 }
             });
             
-            // Give Supabase time to process the URL and establish session
+            // Final session check
             setTimeout(async () => {
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 console.log('Final session check:', session ? session.user.email : 'No session');
-                currentSession = session;
-            }, 3000);
+                if (session) currentSession = session;
+            }, 1000);
             
             // Add form event listener
             const form = document.querySelector('form');
