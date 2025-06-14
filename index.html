@@ -500,7 +500,35 @@
             submitBtn.innerHTML = '<span class="loading-spinner"></span>Setting up password...';
             
             try {
-                // Try to update password directly using the current session
+                // Use the code-based password setup function
+                if (code) {
+                    console.log('Using code-based password setup');
+                    const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password-with-code`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        },
+                        body: JSON.stringify({
+                            code: code,
+                            password: password
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        console.error('Password setup error:', result);
+                        alert('Failed to set password: ' + (result.error || 'Unknown error'));
+                        return;
+                    }
+                    
+                    console.log('Password setup successful:', result);
+                    showState('success');
+                    return;
+                }
+                
+                // Fallback: try direct session update if we have one
                 if (window.currentSession) {
                     console.log('Using current session to update password');
                     const { error } = await supabaseClient.auth.updateUser({
@@ -517,13 +545,12 @@
                     return;
                 }
                 
-                // Fallback: try to get tokens from hash or use edge function
+                // Last fallback: try token-based approach
                 let tokensToUse = {
                     access_token: accessToken,
                     refresh_token: refreshToken
                 };
                 
-                // If we don't have hash tokens, check if we can get them from current session
                 if (!tokensToUse.access_token && window.currentSession) {
                     tokensToUse.access_token = window.currentSession.access_token;
                     tokensToUse.refresh_token = window.currentSession.refresh_token;
@@ -534,7 +561,6 @@
                     return;
                 }
                 
-                // Call our custom edge function to set up the password
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password`, {
                     method: 'POST',
                     headers: {
