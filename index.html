@@ -372,6 +372,8 @@
             
             // Wait for Supabase to automatically detect and set the session
             console.log('Waiting for Supabase to process the URL session...');
+            console.log('Current URL:', window.location.href);
+            console.log('URL params:', new URLSearchParams(window.location.search));
             
             // Listen for auth state changes
             supabaseClient.auth.onAuthStateChange((event, session) => {
@@ -384,14 +386,32 @@
                 }
             });
             
+            // Try to manually exchange the code if detectSessionInUrl didn't work
+            if (code && !currentSession) {
+                console.log('Attempting manual code exchange...');
+                try {
+                    const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
+                    if (data.session) {
+                        console.log('Manual code exchange successful:', data.user.email);
+                        currentSession = data.session;
+                    } else {
+                        console.error('Manual code exchange failed:', error);
+                    }
+                } catch (err) {
+                    console.error('Manual code exchange error:', err);
+                }
+            }
+            
             // Wait a bit for the session to be processed
             setTimeout(async () => {
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 if (session) {
                     currentSession = session;
                     console.log('Session found:', session.user.email);
+                } else {
+                    console.log('No session found after timeout');
                 }
-            }, 1000);
+            }, 2000);
             
             // Add form event listener
             const form = document.querySelector('form');
