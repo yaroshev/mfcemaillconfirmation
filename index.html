@@ -266,14 +266,23 @@
     </div>
 
     <script>
-        // Get URL parameters
+        // Get URL parameters from both query string and hash
         const urlParams = new URLSearchParams(window.location.search);
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        
+        // Check for various confirmation parameters
         const token = urlParams.get('token');
         const tokenHash = urlParams.get('token_hash');
         const type = urlParams.get('type');
         const confirmed = urlParams.get('confirmed');
         const error = urlParams.get('error');
         const errorDescription = urlParams.get('error_description');
+        
+        // Check for Supabase auth tokens in hash
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const tokenType = hashParams.get('token_type');
+        const expiresIn = hashParams.get('expires_in');
 
         // Show appropriate state based on URL parameters
         function showState(state, message = null) {
@@ -309,6 +318,12 @@
                 errorMsg = 'A server error occurred. Please try again or contact support.';
             }
             showState('error', errorMsg);
+        } else if (accessToken && refreshToken) {
+            // Successful confirmation via Supabase built-in flow
+            console.log('Email confirmed successfully via Supabase auth');
+            setTimeout(() => {
+                showState('success');
+            }, 1500);
         } else if (confirmed === 'true') {
             // Successful confirmation via edge function
             setTimeout(() => {
