@@ -495,17 +495,45 @@
                 return;
             }
             
-            // Check if we have the required tokens
-            if (!accessToken || !refreshToken) {
-                alert('Missing authentication tokens. Please try the confirmation link again.');
-                return;
-            }
-            
             // Show loading state
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="loading-spinner"></span>Setting up password...';
             
             try {
+                // Try to update password directly using the current session
+                if (window.currentSession) {
+                    console.log('Using current session to update password');
+                    const { error } = await supabaseClient.auth.updateUser({
+                        password: password
+                    });
+                    
+                    if (error) {
+                        console.error('Direct password update error:', error);
+                        throw error;
+                    }
+                    
+                    console.log('Password updated successfully via direct method');
+                    showState('success');
+                    return;
+                }
+                
+                // Fallback: try to get tokens from hash or use edge function
+                let tokensToUse = {
+                    access_token: accessToken,
+                    refresh_token: refreshToken
+                };
+                
+                // If we don't have hash tokens, check if we can get them from current session
+                if (!tokensToUse.access_token && window.currentSession) {
+                    tokensToUse.access_token = window.currentSession.access_token;
+                    tokensToUse.refresh_token = window.currentSession.refresh_token;
+                }
+                
+                if (!tokensToUse.access_token || !tokensToUse.refresh_token) {
+                    alert('Unable to authenticate for password setup. Please try the confirmation link again.');
+                    return;
+                }
+                
                 // Call our custom edge function to set up the password
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password`, {
                     method: 'POST',
@@ -514,8 +542,8 @@
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                     },
                     body: JSON.stringify({
-                        access_token: accessToken,
-                        refresh_token: refreshToken,
+                        access_token: tokensToUse.access_token,
+                        refresh_token: tokensToUse.refresh_token,
                         password: password
                     })
                 });
@@ -593,12 +621,34 @@
                 }
                 showState('error', errorMsg);
             } else if (code || accessToken || confirmed === 'true' || (token && type === 'signup') || (tokenHash && type === 'signup')) {
-                // Successful confirmation - check if we need to set up auth session
+                // Successful confirmation - handle different token scenarios
                 console.log('Success case detected - will show password setup form');
                 
-                // Try to establish auth session
-                const sessionEstablished = await setupAuthSession();
-                console.log('Session established:', sessionEstablished);
+                let tokensAvailable = false;
+                
+                // If we have a code parameter, try to exchange it for session
+                if (code && !accessToken) {
+                    console.log('Attempting to exchange code for session...');
+                    try {
+                        const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
+                        if (data.session) {
+                            console.log('Successfully exchanged code for session');
+                            tokensAvailable = true;
+                            // Update global variables for the password setup
+                            window.currentSession = data.session;
+                        } else {
+                            console.error('Failed to exchange code for session:', error);
+                        }
+                    } catch (err) {
+                        console.error('Error exchanging code for session:', err);
+                    }
+                } else if (accessToken && refreshToken) {
+                    // We already have tokens from URL hash
+                    tokensAvailable = true;
+                    console.log('Using tokens from URL hash');
+                } else {
+                    console.log('No tokens available, proceeding without session');
+                }
                 
                 setTimeout(() => {
                     console.log('Transitioning to password setup state');
