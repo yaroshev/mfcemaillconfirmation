@@ -269,7 +269,9 @@
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
+        const tokenHash = urlParams.get('token_hash');
         const type = urlParams.get('type');
+        const confirmed = urlParams.get('confirmed');
         const error = urlParams.get('error');
         const errorDescription = urlParams.get('error_description');
 
@@ -293,7 +295,7 @@
 
         // Handle different scenarios
         if (error) {
-            // Error from Supabase
+            // Error from confirmation process
             let errorMsg = 'An error occurred during confirmation';
             if (errorDescription) {
                 errorMsg = errorDescription.replace(/\+/g, ' ');
@@ -301,21 +303,30 @@
                 errorMsg = 'Access denied. Please check your email for a new confirmation link.';
             } else if (error === 'invalid_request') {
                 errorMsg = 'Invalid confirmation link. Please request a new one.';
+            } else if (error === 'verification_failed') {
+                errorMsg = 'Email verification failed. The link may have expired or already been used.';
+            } else if (error === 'server_error') {
+                errorMsg = 'A server error occurred. Please try again or contact support.';
             }
             showState('error', errorMsg);
+        } else if (confirmed === 'true') {
+            // Successful confirmation via edge function
+            setTimeout(() => {
+                showState('success');
+            }, 1500);
         } else if (token && type === 'signup') {
-            // Valid confirmation token
+            // Legacy token format - show success
             setTimeout(() => {
                 showState('success');
             }, 1500);
-        } else if (!token) {
-            // No token provided
-            showState('error', 'Missing confirmation token. Please check your email for the correct link.');
+        } else if (tokenHash && type === 'signup') {
+            // Token hash provided - show success (Supabase handles verification)
+            setTimeout(() => {
+                showState('success');
+            }, 1500);
         } else {
-            // Unknown type or other cases
-            setTimeout(() => {
-                showState('success');
-            }, 1500);
+            // No valid parameters provided
+            showState('error', 'Missing confirmation token. Please check your email for the correct link.');
         }
 
         // Handle app deep linking
