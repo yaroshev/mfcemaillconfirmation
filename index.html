@@ -48,6 +48,9 @@
     const $status = document.getElementById('status');
 
     // --- VERIFY THE LINK ---------------------------------------------------
+    // The errors you're seeing are due to mismatched braces and incorrect nesting
+    // There's an extra closing brace after the first 'Invalid confirmation link' error
+    // and the else statements are not properly aligned
     (async () => {
       let authErr = null;
 
@@ -58,9 +61,13 @@
       } else if (confirmationUrl) {
         // Legacy flow – extract token & email from the nested URL
         const urlObj = new URL(confirmationUrl);
-        const token  = urlObj.searchParams.get('token');
-        const email  = urlObj.searchParams.get('email');
-        const type   = urlObj.searchParams.get('type') || 'signup';
+        let token = urlObj.searchParams.get('token') || urlObj.searchParams.get('code');
+        let email = urlObj.searchParams.get('email');
+        const type = urlObj.searchParams.get('type') || 'signup';
+
+        // fallback: accept email passed as separate QS param ?email=
+        const emailQs = qs.get('email');
+        if (!email && emailQs) email = emailQs;
 
         if (token && email) {
           const { data, error } = await sb.auth.verifyOtp({ email, token, type });
@@ -78,7 +85,7 @@
         return;
       }
 
-      // Session is active – show the password form
+      // Session is active – show the password form
       $form.classList.remove('hidden');
     })();
 
