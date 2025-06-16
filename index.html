@@ -2,35 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MFC – First‑time password</title>
+  <title>MFC – Set Your Password</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif;margin:0;padding:2rem;background:#fafafa;color:#111}
-    .card{max-width:420px;margin:auto;background:#fff;border:1px solid #ddd;border-radius:8px;padding:2rem}
-    h1{font-size:1.25rem;margin:0 0 1rem}
-    input{width:100%;padding:.75rem;border:1px solid #ccc;border-radius:6px;margin:.5rem 0}
-    button{width:100%;padding:.75rem;border:0;border-radius:6px;background:#000;color:#fff;font-weight:600;cursor:pointer}
-    .hidden{display:none}
-    .msg{margin:.75rem 0;color:#d00}
-    .success{color:#080}
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f4f5f7; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    .card { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
+    h1 { margin: 0 0 1rem; font-size: 1.5rem; text-align: center; }
+    input { width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+    button { width: 100%; padding: 0.75rem; margin-top: 1rem; background: #0070f3; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+    #status { margin-top: 0.75rem; text-align: center; color: #e00; }
+    .success { color: #080; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Set up your password</h1>
-
+    <h1>Set Your Password</h1>
     <form id="pw-form" class="hidden">
-      <input type="password" id="pw" placeholder="Password (8+ chars)" required minlength="8">
-      <input type="password" id="pw2" placeholder="Repeat password" required minlength="8">
-      <button type="submit">Save password</button>
+      <input type="password" id="pw" placeholder="Password (min 8 characters)" required minlength="8">
+      <input type="password" id="pw2" placeholder="Confirm password" required minlength="8">
+      <button type="submit">Save Password</button>
     </form>
-
-    <p id="status" class="msg"></p>
+    <p id="status"></p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // CONFIG ---------------------------------------------------------------
     const SUPABASE_URL  = 'https://bpnwodgubpmhhkpoygip.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyNjc4NDgsImV4cCI6MjA2Mjg0Mzg0OH0.5Qobz9DDYdZifml0saDu8aEMgXwTP8sAczotl1JrKpQ';
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -40,36 +37,38 @@
     const $pw2    = document.getElementById('pw2');
     const $status = document.getElementById('status');
 
-    // Wait for any redirected session to be restored
     (async () => {
+      // pick up session from URL hash after Supabase verify
+      const hash = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+      if (hash.access_token) {
+        await sb.auth.setSession({ access_token: hash.access_token, refresh_token: hash.refresh_token });
+        history.replaceState({}, '', location.pathname);
+      }
+
       const { data: { session } } = await sb.auth.getSession();
       if (!session) {
-        $status.textContent = 'Token has expired or is invalid';
+        $status.textContent = 'Token has expired or is invalid.';
         return;
       }
-      // Session is active – show form
+
       $form.classList.remove('hidden');
     })();
 
-    // PASSWORD SAVE --------------------------------------------------------
     $form.addEventListener('submit', async e => {
       e.preventDefault();
       $status.textContent = '';
 
-      const pass1 = $pw1.value.trim();
-      const pass2 = $pw2.value.trim();
-      if (pass1 !== pass2) {
+      if ($pw1.value !== $pw2.value) {
         $status.textContent = 'Passwords do not match.';
         return;
       }
 
-      const { error } = await sb.auth.updateUser({ password: pass1 });
+      const { error } = await sb.auth.updateUser({ password: $pw1.value });
       if (error) {
-        $status.textContent = error.message || 'Could not set password.';
+        $status.textContent = error.message;
       } else {
-        $status.classList.remove('msg');
+        $status.textContent = '✅ Password set! Redirecting…';
         $status.classList.add('success');
-        $status.textContent = '✅ Password set. Redirecting…';
         setTimeout(() => location.href = '/', 1500);
       }
     });
