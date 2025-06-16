@@ -27,51 +27,65 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL  = 'https://bpnwodgubpmhhkpoygip.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbndvZGd1YnBtaGhrcG95Z2lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyNjc4NDgsImV4cCI6MjA2Mjg0Mzg0OH0.5Qobz9DDYdZifml0saDu8aEMgXwTP8sAczotl1JrKpQ';
-    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL  = 'https://bpnwodgubpmhhkpoygip.supabase.co';
+  const SUPABASE_ANON = 'YOUR_ANON_KEY';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    const $form   = document.getElementById('pw-form');
-    const $pw1    = document.getElementById('pw');
-    const $pw2    = document.getElementById('pw2');
-    const $status = document.getElementById('status');
+  // Parse out confirmation_url token
+  const qs = new URLSearchParams(location.search);
+  const confirmationUrl = qs.get('confirmation_url');
 
-    (async () => {
-      // pick up session from URL hash after Supabase verify
-      const hash = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
-      if (hash.access_token) {
-        await sb.auth.setSession({ access_token: hash.access_token, refresh_token: hash.refresh_token });
-        history.replaceState({}, '', location.pathname);
-      }
+  const $form       = document.getElementById('pw-form');
+  const $confirmBtn = document.getElementById('confirm-btn');
+  const $status     = document.getElementById('status');
 
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) {
-        $status.textContent = 'Token has expired or is invalid.';
+  if (!confirmationUrl) {
+    $status.textContent = 'No confirmation link provided.';
+  } else {
+    // Show only the confirm button initially
+    $confirmBtn.classList.remove('hidden');
+    $confirmBtn.addEventListener('click', async () => {
+      $confirmBtn.disabled = true;
+      $status.textContent = '';
+
+      // Extract token & type from nested URL
+      const urlObj = new URL(confirmationUrl);
+      const token  = urlObj.searchParams.get('token');
+      const type   = urlObj.searchParams.get('type');
+      const email  = urlObj.searchParams.get('email');
+
+      const { data, error } = await sb.auth.verifyOtp({ email, token, type });
+      if (error) {
+        $status.textContent = error.message;
         return;
       }
 
+      // Set session and reveal password form
+      await sb.auth.setSession(data.session);
+      $confirmBtn.classList.add('hidden');
       $form.classList.remove('hidden');
-    })();
+    });
 
+    // Handle password save
     $form.addEventListener('submit', async e => {
       e.preventDefault();
-      $status.textContent = '';
-
-      if ($pw1.value !== $pw2.value) {
+      const pw1 = document.getElementById('pw').value;
+      const pw2 = document.getElementById('pw2').value;
+      if (pw1 !== pw2) {
         $status.textContent = 'Passwords do not match.';
         return;
       }
-
-      const { error } = await sb.auth.updateUser({ password: $pw1.value });
+      const { error } = await sb.auth.updateUser({ password: pw1 });
       if (error) {
         $status.textContent = error.message;
       } else {
         $status.textContent = '✅ Password set! Redirecting…';
-        $status.classList.add('success');
         setTimeout(() => location.href = '/', 1500);
       }
     });
-  </script>
+  }
+</script>
 </body>
 </html>
