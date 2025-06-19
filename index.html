@@ -13,7 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000000;
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,63 +23,83 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
             text-align: center;
+            padding: 40px 20px;
+        }
+
+        .logo-container {
+            margin-bottom: 40px;
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
+            width: 120px;
+            height: 120px;
+            background: #ffffff;
+            border: 3px solid #ffffff;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 30px;
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-        }
-
-        h1 {
-            color: #2d3748;
-            font-size: 28px;
-            margin-bottom: 16px;
+            margin: 0 auto 24px;
+            color: #000000;
+            font-size: 48px;
             font-weight: 700;
+            letter-spacing: -2px;
         }
 
-        .subtitle {
-            color: #718096;
+        .company-name {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .company-subtitle {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
+
+        .status-message {
+            margin: 60px 0 40px;
+            padding: 0 20px;
+        }
+
+        .status-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .status-description {
             font-size: 16px;
-            margin-bottom: 30px;
+            color: #cccccc;
             line-height: 1.5;
+            margin-bottom: 20px;
         }
 
-        .status-card {
-            background: #f7fafc;
-            border-radius: 12px;
-            padding: 30px;
-            margin: 30px 0;
-            border-left: 4px solid #667eea;
-        }
-
-        .loading {
+        .loading-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
+            margin: 20px 0;
         }
 
         .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #667eea;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333333;
+            border-top: 2px solid #007AFF;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -88,263 +109,279 @@
             100% { transform: rotate(360deg); }
         }
 
-        .success {
-            color: #38a169;
-        }
-
-        .error {
-            color: #e53e3e;
-            border-left-color: #e53e3e;
-        }
-
-        .password-form {
+        .form-container {
+            margin-top: 40px;
             text-align: left;
-            margin-top: 30px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .input-group {
+            margin-bottom: 24px;
         }
 
-        label {
+        .input-label {
             display: block;
-            margin-bottom: 8px;
-            color: #2d3748;
-            font-weight: 600;
-        }
-
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.2s;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
         }
 
-        input[type="password"]:focus {
+        .input-field {
+            width: 100%;
+            height: 56px;
+            background: #1a1a1a;
+            border: 2px solid #333333;
+            border-radius: 12px;
+            padding: 0 16px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-field:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #007AFF;
         }
 
-        .password-requirements {
-            margin-top: 12px;
-            padding: 16px;
-            background: #f0f4f8;
-            border-radius: 8px;
+        .input-field::placeholder {
+            color: #666666;
+        }
+
+        .requirements-container {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .requirements-title {
             font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
         }
 
-        .requirement {
+        .requirement-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
-        .requirement.met {
-            color: #38a169;
+        .requirement-item.met {
+            color: #34C759;
         }
 
-        .requirement.unmet {
-            color: #e53e3e;
+        .requirement-item.unmet {
+            color: #666666;
         }
 
         .btn {
             width: 100%;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            height: 56px;
+            background: #007AFF;
+            color: #ffffff;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
-            margin-top: 20px;
+            transition: opacity 0.2s ease;
+            margin-top: 24px;
         }
 
         .btn:hover:not(:disabled) {
-            opacity: 0.9;
+            opacity: 0.8;
         }
 
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.3;
             cursor: not-allowed;
         }
 
-        .btn.secondary {
-            background: #e2e8f0;
-            color: #4a5568;
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #007AFF;
+            color: #007AFF;
         }
 
-        .btn.secondary:hover:not(:disabled) {
-            background: #cbd5e0;
-        }
-
-        .error-message {
-            color: #e53e3e;
-            font-size: 14px;
-            margin-top: 12px;
-            text-align: center;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .step {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .step.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .step.completed {
-            background: #38a169;
-            color: white;
-        }
-
-        .step.inactive {
-            background: #e2e8f0;
-            color: #a0aec0;
+        .btn-secondary:hover:not(:disabled) {
+            background: #007AFF;
+            color: #ffffff;
         }
 
         .deep-link-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            background: #2d3748;
-            color: white;
+            width: 100%;
+            height: 56px;
+            background: #007AFF;
+            color: #ffffff;
             text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: 600;
-            margin-top: 20px;
-            transition: background-color 0.2s;
+            margin-top: 24px;
+            transition: opacity 0.2s ease;
         }
 
         .deep-link-btn:hover {
-            background: #1a202c;
+            opacity: 0.8;
         }
 
-        @media (max-width: 640px) {
-            .container {
-                padding: 30px 20px;
-                margin: 10px;
-            }
+        .error-message {
+            color: #FF3B30;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(255, 59, 48, 0.1);
+            border-radius: 8px;
+        }
 
-            h1 {
-                font-size: 24px;
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #333333;
+            transition: background-color 0.2s ease;
+        }
+
+        .step-dot.active {
+            background: #007AFF;
+        }
+
+        .step-dot.completed {
+            background: #34C759;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .logo {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+            
+            .company-name,
+            .company-subtitle {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">MFC</div>
-        
-        <!-- Step indicator -->
-        <div class="step-indicator">
-            <div class="step" id="step1">1</div>
-            <div class="step" id="step2">2</div>
-            <div class="step" id="step3">3</div>
+        <!-- Logo and Branding -->
+        <div class="logo-container">
+            <div class="logo">MFC</div>
+            <div class="company-name">MADNESS</div>
+            <div class="company-subtitle">FORMING &<br>CONSTRUCTION</div>
         </div>
 
-        <!-- Initial loading state -->
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step-dot" id="step1"></div>
+            <div class="step-dot" id="step2"></div>
+            <div class="step-dot" id="step3"></div>
+        </div>
+
+        <!-- Loading State -->
         <div id="loading-state">
-            <h1>Confirming Your Email</h1>
-            <p class="subtitle">Please wait while we verify your email address...</p>
-            
-            <div class="status-card">
-                <div class="loading">
+            <div class="status-message">
+                <div class="status-title">Confirming Your Email</div>
+                <div class="status-description">Please wait while we verify your email address</div>
+                <div class="loading-indicator">
                     <div class="spinner"></div>
-                    <span>Verifying email confirmation...</span>
+                    <span>Verifying...</span>
                 </div>
             </div>
         </div>
 
-        <!-- Email confirmed state -->
+        <!-- Email Confirmed State -->
         <div id="confirmed-state" style="display: none;">
-            <h1>🎉 Email Confirmed!</h1>
-            <p class="subtitle">Great! Your email has been verified. Now let's set up your password to complete your account.</p>
+            <div class="status-message">
+                <div class="success-icon">✅</div>
+                <div class="status-title">Email Confirmed!</div>
+                <div class="status-description">Great! Now let's set up your password to complete your account.</div>
+            </div>
             
-            <div class="password-form">
-                <div class="form-group">
-                    <label for="password">Choose Your Password</label>
-                    <input type="password" id="password" placeholder="Enter a secure password">
+            <div class="form-container">
+                <div class="input-group">
+                    <label class="input-label" for="password">Choose Your Password</label>
+                    <input type="password" id="password" class="input-field" placeholder="Enter a secure password">
                 </div>
 
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                <div class="input-group">
+                    <label class="input-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm your password">
                 </div>
 
-                <div class="password-requirements">
-                    <strong>Password Requirements:</strong>
-                    <div class="requirement unmet" id="req-length">
-                        <span>•</span> At least 8 characters long
+                <div class="requirements-container">
+                    <div class="requirements-title">Password Requirements:</div>
+                    <div class="requirement-item unmet" id="req-length">
+                        <span>•</span> At least 8 characters
                     </div>
-                    <div class="requirement unmet" id="req-uppercase">
-                        <span>•</span> Contains uppercase letter
+                    <div class="requirement-item unmet" id="req-uppercase">
+                        <span>•</span> Uppercase letter
                     </div>
-                    <div class="requirement unmet" id="req-lowercase">
-                        <span>•</span> Contains lowercase letter
+                    <div class="requirement-item unmet" id="req-lowercase">
+                        <span>•</span> Lowercase letter
                     </div>
-                    <div class="requirement unmet" id="req-number">
-                        <span>•</span> Contains a number
+                    <div class="requirement-item unmet" id="req-number">
+                        <span>•</span> Number
                     </div>
-                    <div class="requirement unmet" id="req-match">
+                    <div class="requirement-item unmet" id="req-match">
                         <span>•</span> Passwords match
                     </div>
                 </div>
 
-                <button class="btn" id="setPasswordBtn" disabled>Set Password & Activate Account</button>
+                <button class="btn" id="setPasswordBtn" disabled>Activate Account</button>
                 <div id="password-message"></div>
             </div>
         </div>
 
-        <!-- Success state -->
+        <!-- Success State -->
         <div id="success-state" style="display: none;">
-            <h1>✅ Account Activated!</h1>
-            <p class="subtitle">Congratulations! Your MFC account is now active and ready to use.</p>
-            
-            <div class="status-card success">
-                <h3>🚀 What's Next?</h3>
-                <p>You can now sign in to the MFC mobile app with your email and the password you just created.</p>
+            <div class="status-message">
+                <div class="success-icon">🎉</div>
+                <div class="status-title">Account Activated!</div>
+                <div class="status-description">Your MFC account is now active and ready to use.</div>
             </div>
 
             <a href="mfc://login" class="deep-link-btn">
-                📱 Open MFC App
+                Open MFC App
             </a>
             
-            <button class="btn secondary" onclick="window.close()">Close This Window</button>
+            <button class="btn btn-secondary" onclick="window.close()">Close</button>
         </div>
 
-        <!-- Error state -->
+        <!-- Error State -->
         <div id="error-state" style="display: none;">
-            <h1>❌ Confirmation Failed</h1>
-            <p class="subtitle">We encountered an issue while confirming your email address.</p>
-            
-            <div class="status-card error">
-                <h3>What happened?</h3>
-                <p id="error-details">The confirmation link may have expired or already been used.</p>
+            <div class="status-message">
+                <div class="status-title">Confirmation Failed</div>
+                <div class="status-description" id="error-details">The confirmation link may have expired or already been used.</div>
             </div>
 
-            <button class="btn secondary" onclick="location.reload()">Try Again</button>
+            <button class="btn btn-secondary" onclick="location.reload()">Try Again</button>
         </div>
     </div>
 
@@ -368,14 +405,12 @@
                 const userId = urlParams.get('user_id')
                 const error = urlParams.get('error')
 
-                // Check for errors first
                 if (error) {
                     const errorDescription = urlParams.get('error_description') || 'Unknown error occurred'
                     showError(decodeURIComponent(errorDescription))
                     return
                 }
 
-                // Check if email is already confirmed
                 if (confirmed === 'true' && userId) {
                     console.log('Email confirmation successful')
                     currentUserId = userId
@@ -385,7 +420,6 @@
                     return
                 }
 
-                // If no valid confirmation found
                 showError('Invalid confirmation link. Please check your email and try again.')
 
             } catch (error) {
@@ -398,7 +432,6 @@
             document.getElementById('loading-state').style.display = 'none'
             document.getElementById('confirmed-state').style.display = 'block'
             
-            // Set up password validation
             const passwordInput = document.getElementById('password')
             const confirmPasswordInput = document.getElementById('confirmPassword')
             const setPasswordBtn = document.getElementById('setPasswordBtn')
@@ -407,7 +440,6 @@
                 const password = passwordInput.value
                 const confirmPassword = confirmPasswordInput.value
 
-                // Check requirements
                 const requirements = {
                     length: password.length >= 8,
                     uppercase: /[A-Z]/.test(password),
@@ -416,14 +448,12 @@
                     match: password === confirmPassword && password.length > 0
                 }
 
-                // Update UI
                 updateRequirement('req-length', requirements.length)
                 updateRequirement('req-uppercase', requirements.uppercase)
                 updateRequirement('req-lowercase', requirements.lowercase)
                 updateRequirement('req-number', requirements.number)
                 updateRequirement('req-match', requirements.match)
 
-                // Enable button if all requirements met
                 const allMet = Object.values(requirements).every(req => req)
                 setPasswordBtn.disabled = !allMet
             }
@@ -435,7 +465,7 @@
 
         function updateRequirement(id, met) {
             const element = document.getElementById(id)
-            element.className = `requirement ${met ? 'met' : 'unmet'}`
+            element.className = `requirement-item ${met ? 'met' : 'unmet'}`
             element.querySelector('span').textContent = met ? '✓' : '•'
         }
 
@@ -446,12 +476,11 @@
 
             try {
                 setPasswordBtn.disabled = true
-                setPasswordBtn.textContent = 'Setting up your account...'
+                setPasswordBtn.textContent = 'Activating...'
                 messageDiv.innerHTML = ''
 
                 const password = passwordInput.value
 
-                // Call the setup-password edge function
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/setup-password`, {
                     method: 'POST',
                     headers: {
@@ -482,7 +511,7 @@
                 console.error('Password setup error:', error)
                 messageDiv.innerHTML = `<div class="error-message">Failed to set password: ${error.message}</div>`
                 setPasswordBtn.disabled = false
-                setPasswordBtn.textContent = 'Set Password & Activate Account'
+                setPasswordBtn.textContent = 'Activate Account'
             }
         }
 
@@ -495,18 +524,12 @@
             document.getElementById('loading-state').style.display = 'none'
             document.getElementById('error-details').textContent = message
             document.getElementById('error-state').style.display = 'block'
-            updateStepIndicator(1, 'inactive')
+            updateStepIndicator(1, 'active')
         }
 
         function updateStepIndicator(step, status) {
             const stepElement = document.getElementById(`step${step}`)
-            stepElement.className = `step ${status}`
-            
-            if (status === 'completed') {
-                stepElement.textContent = '✓'
-            } else {
-                stepElement.textContent = step
-            }
+            stepElement.className = `step-dot ${status}`
         }
 
         // Start the app
