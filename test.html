@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MFC Flow Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .test-link {
+            display: block;
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 0;
+            transition: background-color 0.2s;
+        }
+        
+        .test-link:hover {
+            background: #5a6fd8;
+        }
+        
+        .error-link {
+            background: #e53e3e;
+        }
+        
+        .error-link:hover {
+            background: #c53030;
+        }
+        
+        .description {
+            color: #718096;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 MFC Email Confirmation Flow - Test Cases</h1>
+        <p>Use these links to test different scenarios of the email confirmation flow:</p>
+    </div>
+
+    <div class="container">
+        <h2>✅ Success Scenarios</h2>
+        
+        <div class="description">
+            Successful email confirmation with user ID (normal flow):
+        </div>
+        <a href="index.html?confirmed=true&type=signup&user_id=12345678-1234-1234-1234-123456789012" class="test-link">
+            Test: Successful Confirmation
+        </a>
+        
+        <div class="description">
+            Test with different user ID:
+        </div>
+        <a href="index.html?confirmed=true&type=signup&user_id=87654321-4321-4321-4321-210987654321" class="test-link">
+            Test: Different User ID
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>❌ Error Scenarios</h2>
+        
+        <div class="description">
+            Missing confirmation token:
+        </div>
+        <a href="index.html?error=invalid_request&error_description=Missing+confirmation+token" class="test-link error-link">
+            Test: Missing Token Error
+        </a>
+        
+        <div class="description">
+            Expired confirmation link:
+        </div>
+        <a href="index.html?error=verification_failed&error_description=Token+has+expired" class="test-link error-link">
+            Test: Expired Token Error
+        </a>
+        
+        <div class="description">
+            Invalid or already used token:
+        </div>
+        <a href="index.html?error=verification_failed&error_description=Token+already+used" class="test-link error-link">
+            Test: Used Token Error
+        </a>
+        
+        <div class="description">
+            Server error:
+        </div>
+        <a href="index.html?error=server_error&error_description=Database+connection+failed" class="test-link error-link">
+            Test: Server Error
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>🔗 Edge Cases</h2>
+        
+        <div class="description">
+            Missing user ID (should show error):
+        </div>
+        <a href="index.html?confirmed=true&type=signup" class="test-link error-link">
+            Test: Missing User ID
+        </a>
+        
+        <div class="description">
+            No parameters (should show error):
+        </div>
+        <a href="index.html" class="test-link error-link">
+            Test: No Parameters
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>📱 Mobile Testing</h2>
+        
+        <div class="description">
+            Test the mobile experience and deep linking:
+        </div>
+        <a href="index.html?confirmed=true&type=signup&user_id=mobile-test-123" class="test-link">
+            Test: Mobile Experience
+        </a>
+        
+        <div class="description">
+            Test deep link directly (should try to open app):
+        </div>
+        <a href="mfc://login" class="test-link">
+            Test: Direct Deep Link
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>🛠 Development Info</h2>
+        <p><strong>Frontend URL:</strong> https://mfc-inc.netlify.app</p>
+        <p><strong>Edge Functions:</strong></p>
+        <ul>
+            <li><code>email-confirm</code> - Handles email verification</li>
+            <li><code>setup-password</code> - Handles password setup</li>
+        </ul>
+        <p><strong>Flow:</strong> Admin approves → Email sent → User clicks link → Email confirmed → Password setup → Account activated</p>
+    </div>
+</body>
+</html> 
