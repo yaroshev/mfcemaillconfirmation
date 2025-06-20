@@ -68,6 +68,19 @@
             line-height: 1.2;
         }
 
+        .beta-badge {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 16px;
+            display: inline-block;
+        }
+
         .status-message {
             margin: 60px 0 40px;
             padding: 0 20px;
@@ -232,6 +245,15 @@
             opacity: 0.8;
         }
 
+        .testflight-btn {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            margin-bottom: 12px;
+        }
+
+        .testflight-btn:hover {
+            opacity: 0.9;
+        }
+
         .error-message {
             color: #FF3B30;
             font-size: 14px;
@@ -270,6 +292,28 @@
             background: #34C759;
         }
 
+        .beta-info {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .beta-info-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FF6B6B;
+            margin-bottom: 8px;
+        }
+
+        .beta-info-text {
+            font-size: 13px;
+            color: #cccccc;
+            line-height: 1.4;
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 20px 10px;
@@ -295,6 +339,7 @@
             <div class="logo">MFC</div>
             <div class="company-name">MADNESS</div>
             <div class="company-subtitle">FORMING &<br>CONSTRUCTION</div>
+            <div class="beta-badge">Beta Testing</div>
         </div>
 
         <!-- Step Indicator -->
@@ -367,6 +412,15 @@
                 <div class="status-description">Your MFC account is now active and ready to use.</div>
             </div>
 
+            <div class="beta-info">
+                <div class="beta-info-title">🧪 Beta Testing</div>
+                <div class="beta-info-text">You're using the beta version of MFC. If you don't have TestFlight installed, get it from the App Store first.</div>
+            </div>
+
+            <a href="https://testflight.apple.com/join/y3bnf8Fa" class="deep-link-btn testflight-btn">
+                Open in TestFlight
+            </a>
+            
             <a href="mfc://login" class="deep-link-btn">
                 Open MFC App
             </a>
@@ -530,6 +584,31 @@
         function updateStepIndicator(step, status) {
             const stepElement = document.getElementById(`step${step}`)
             stepElement.className = `step-dot ${status}`
+        }
+
+        // Enhanced mobile detection and app opening
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        function isIOSDevice() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent);
+        }
+
+        // Enhance the success state to better handle TestFlight
+        function enhanceSuccessState() {
+            const successState = document.getElementById('success-state');
+            if (successState && successState.style.display !== 'none') {
+                if (isMobileDevice()) {
+                    // Add mobile-specific instructions
+                    const betaInfo = successState.querySelector('.beta-info-text');
+                    if (betaInfo) {
+                        betaInfo.innerHTML = isIOSDevice() 
+                            ? 'Tap "Open in TestFlight" to access the beta version of MFC. Make sure TestFlight is installed first.'
+                            : 'You\'re using the beta version of MFC. Make sure you have TestFlight installed from the App Store.';
+                    }
+                }
+            }
         }
 
         // Start the app
